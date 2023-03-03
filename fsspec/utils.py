@@ -76,8 +76,8 @@ def infer_storage_options(urlpath, inherit_storage_options=None):
         try:
             port = parsed_path.port
         except ValueError:
-            # ARN found
-            pass
+            options["host"] = parsed_path.netloc.rsplit("@", 1)[-1]
+
         if protocol in ("s3", "s3a", "gcs", "gs"):
             options["path"] = options["host"] + options["path"]
         else:
