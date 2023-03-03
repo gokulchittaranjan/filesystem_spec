@@ -72,13 +72,18 @@ def infer_storage_options(urlpath, inherit_storage_options=None):
         # lowercases the hostname which is not always desirable (e.g. in S3):
         # https://github.com/dask/dask/issues/1417
         options["host"] = parsed_path.netloc.rsplit("@", 1)[-1].rsplit(":", 1)[0]
-
+        port = None
+        try:
+            port = parsed_path.port
+        except ValueError:
+            # ARN found
+            pass
         if protocol in ("s3", "s3a", "gcs", "gs"):
             options["path"] = options["host"] + options["path"]
         else:
             options["host"] = options["host"]
-        if parsed_path.port:
-            options["port"] = parsed_path.port
+        if port:
+            options["port"] = port
         if parsed_path.username:
             options["username"] = parsed_path.username
         if parsed_path.password:
